@@ -31,8 +31,8 @@ fn gen_chain_from_start<'a, T: Eq + Hash, R: Rng + ?Sized>(map: &HashMap<&'a T, 
     let mut current_state = start_state;
     loop {
         result.push(current_state);
-        let f = map.get(current_state).unwrap();
-        match f[rng.gen_range(0, f.len())] {
+        let followup = map.get(current_state).expect(STATE_MISSING_ERR);
+        match followup[rng.gen_range(0, followup.len())] {
             FollowupState::End => break,
             FollowupState::State(state) => current_state = state,
         }
