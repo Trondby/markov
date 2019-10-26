@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use std::vec::Vec;
 
-use self::rand::{Rng, SeedableRng};
-use self::rand::prelude::StdRng;
+use rand::{Rng, SeedableRng};
+use rand::rngs::StdRng;
 
 static STATE_MISSING_ERR: &str = "state not in map";
 
@@ -16,10 +16,10 @@ enum FollowupState<T> {
 
 fn add_to_markov_map<'a, T: Eq + Hash>(map: &mut HashMap<&'a T, Vec<FollowupState<&'a T>>>, states: &'a Vec<T>) {
     let start_state = &states[0];
-    let _ = map.entry(start_state).or_insert_with(|| Vec::new());
+    let _ = map.entry(start_state).or_insert_with(|| { Vec::new() });
     let mut prev_state = start_state;
     for state in states.iter().skip(1) {
-        let _ = map.entry(state).or_insert_with(|| Vec::new());
+        let _ = map.entry(state).or_insert_with(|| { Vec::new() });
         map.get_mut(prev_state).expect(STATE_MISSING_ERR).push(FollowupState::State(state));
         prev_state = state;
     }

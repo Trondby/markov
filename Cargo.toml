@@ -5,8 +5,4 @@ authors = ["Trondby <Trondby@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-rand = "0.7.2"
-
-[lib]
-name = "markov"
-path = "src/lib.rs"
+rand = "0.7"
