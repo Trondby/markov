@@ -5,4 +5,9 @@ authors = ["Trondby <Trondby@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-rand = "0.7"
+rand = "0.8.5"
+
+[profile.release]
+debug = false
+panic = 'abort'
+strip = true

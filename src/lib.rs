@@ -32,7 +32,7 @@ fn gen_chain_from_start<'a, T: Eq + Hash, R: Rng + ?Sized>(map: &HashMap<&'a T, 
     loop {
         result.push(current_state);
         let followup = map.get(current_state).expect(STATE_MISSING_ERR);
-        match followup[rng.gen_range(0, followup.len())] {
+        match followup[rng.gen_range(0..followup.len())] {
             FollowupState::End => break,
             FollowupState::State(state) => current_state = state,
         }
@@ -75,7 +75,7 @@ pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_li
         return Vec::new();
     }
 
-    gen_chain_from_start(&map, starting_states[rng.gen_range(0, starting_states.len())], rng)
+    gen_chain_from_start(&map, starting_states[rng.gen_range(0..starting_states.len())], rng)
 }
 
 pub fn gen_chain_from_many<T: Eq + Hash>(states_list: &Vec<Vec<T>>) -> Vec<&T> {
