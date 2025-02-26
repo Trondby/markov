@@ -2,7 +2,7 @@
 name = "markov"
 version = "0.1.0"
 authors = ["Trondby <Trondby@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 rand = "0.8.5"

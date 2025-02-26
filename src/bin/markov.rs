@@ -1,10 +1,13 @@
-use std::env;
+use std::{env, io};
+use std::io::BufRead;
 
 fn main() {
-    let args = env::args().collect::<Vec<String>>();
-    let mut sentences = Vec::new();
-
-    args.iter().skip(1).for_each(|sentence| sentences.push(sentence.split_whitespace().collect()));
-
-    println!("{}", markov::gen_chain_from_many(&sentences).iter().map(|s| String::from(**s)).collect::<Vec<String>>().join(" "));
+    let mut args = env::args().collect::<Vec<String>>();
+    if args.len() == 1 {
+        let stdin = io::stdin();
+        stdin.lock().lines().for_each(|line| args.push(line.unwrap()));
+    }
+    let mut quotes = Vec::new();
+    args.iter().skip(1).for_each(|quote| quotes.push(quote.split_whitespace().collect()));
+    println!("{}", markov::gen_chain_from_many(&quotes).iter().map(|s| String::from(**s)).collect::<Vec<String>>().join(" "));
 }

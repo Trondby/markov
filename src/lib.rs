@@ -1,11 +1,9 @@
-extern crate rand;
-
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::vec::Vec;
 
-use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 
 static STATE_MISSING_ERR: &str = "state not in map";
 
@@ -14,12 +12,12 @@ enum FollowupState<T> {
     State(T),
 }
 
-fn add_to_markov_map<'a, T: Eq + Hash>(map: &mut HashMap<&'a T, Vec<FollowupState<&'a T>>>, states: &'a Vec<T>) {
+fn add_to_markov_map<'a, T: Eq + Hash>(map: &mut HashMap<&'a T, Vec<FollowupState<&'a T>>>, states: &'a [T]) {
     let start_state = &states[0];
-    let _ = map.entry(start_state).or_insert_with(|| { Vec::new() });
+    let _ = map.entry(start_state).or_default();
     let mut prev_state = start_state;
     for state in states.iter().skip(1) {
-        let _ = map.entry(state).or_insert_with(|| { Vec::new() });
+        let _ = map.entry(state).or_default();
         map.get_mut(prev_state).expect(STATE_MISSING_ERR).push(FollowupState::State(state));
         prev_state = state;
     }
@@ -41,7 +39,7 @@ fn gen_chain_from_start<'a, T: Eq + Hash, R: Rng + ?Sized>(map: &HashMap<&'a T, 
     result
 }
 
-pub fn gen_chain_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states: &'a Vec<T>, rng: &mut R) -> Vec<&'a T> {
+pub fn gen_chain_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states: &'a [T], rng: &mut R) -> Vec<&'a T> {
     if states.is_empty() {
         return Vec::new();
     }
@@ -52,11 +50,11 @@ pub fn gen_chain_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states: &'a Vec<T>,
     gen_chain_from_start(&map, &states[0], rng)
 }
 
-pub fn gen_chain<T: Eq + Hash>(states: &Vec<T>) -> Vec<&T> {
+pub fn gen_chain<T: Eq + Hash>(states: &[T]) -> Vec<&T> {
     gen_chain_with_rng(states, &mut StdRng::from_entropy())
 }
 
-pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_list: &'a Vec<Vec<T>>, rng: &mut R) -> Vec<&'a T> {
+pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_list: &'a [Vec<T>], rng: &mut R) -> Vec<&'a T> {
     if states_list.is_empty() {
         return Vec::new();
     }
@@ -78,6 +76,6 @@ pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_li
     gen_chain_from_start(&map, starting_states[rng.gen_range(0..starting_states.len())], rng)
 }
 
-pub fn gen_chain_from_many<T: Eq + Hash>(states_list: &Vec<Vec<T>>) -> Vec<&T> {
+pub fn gen_chain_from_many<T: Eq + Hash>(states_list: &[Vec<T>]) -> Vec<&T> {
     gen_chain_from_many_with_rng(states_list, &mut StdRng::from_entropy())
 }
