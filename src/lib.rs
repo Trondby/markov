@@ -30,7 +30,7 @@ fn gen_chain_from_start<'a, T: Eq + Hash, R: Rng + ?Sized>(map: &HashMap<&'a T, 
     loop {
         result.push(current_state);
         let followup = map.get(current_state).expect(STATE_MISSING_ERR);
-        match followup[rng.gen_range(0..followup.len())] {
+        match followup[rng.random_range(0..followup.len())] {
             FollowupState::End => break,
             FollowupState::State(state) => current_state = state,
         }
@@ -51,7 +51,7 @@ pub fn gen_chain_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states: &'a [T], rn
 }
 
 pub fn gen_chain<T: Eq + Hash>(states: &[T]) -> Vec<&T> {
-    gen_chain_with_rng(states, &mut StdRng::from_entropy())
+    gen_chain_with_rng(states, &mut StdRng::from_os_rng())
 }
 
 pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_list: &'a [Vec<T>], rng: &mut R) -> Vec<&'a T> {
@@ -73,9 +73,9 @@ pub fn gen_chain_from_many_with_rng<'a, T: Eq + Hash, R: Rng + ?Sized>(states_li
         return Vec::new();
     }
 
-    gen_chain_from_start(&map, starting_states[rng.gen_range(0..starting_states.len())], rng)
+    gen_chain_from_start(&map, starting_states[rng.random_range(0..starting_states.len())], rng)
 }
 
 pub fn gen_chain_from_many<T: Eq + Hash>(states_list: &[Vec<T>]) -> Vec<&T> {
-    gen_chain_from_many_with_rng(states_list, &mut StdRng::from_entropy())
+    gen_chain_from_many_with_rng(states_list, &mut StdRng::from_os_rng())
 }
