@@ -9,5 +9,6 @@ rand = "0.9.0"
 
 [profile.release]
 debug = false
-panic = 'abort'
+panic = "abort"
 strip = true
+lto = true
