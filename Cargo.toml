@@ -12,3 +12,4 @@ debug = false
 panic = "abort"
 strip = true
 lto = true
+codegen-units = 1
